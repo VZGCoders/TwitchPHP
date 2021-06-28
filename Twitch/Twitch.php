@@ -241,12 +241,16 @@ class Twitch
 	
 	protected function badwordsCheck($message) {
 		foreach ($this->badwords as $badword) {
-			if (str_contains($message, $badword)) return true;
+			if (str_contains($message, $badword)) {
+				if ($this->verbose) $this->emit('[BADWORD] ' . $badword);
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	public function ban($username, $reason = '') {
+		if ($this->verbose) $this->emit('[BAN] ' . $username . ' - ' . $reason);
 		if ( ($username != $this->nick) && (!in_array($username, $this->channels)) ) $connection->write("/ban $username $reason");
 	}
 	
