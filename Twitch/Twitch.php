@@ -155,6 +155,16 @@ class Twitch
 		}
 	}
 	
+	public function ban($username, $reason = ''): bool
+	{
+		if ($this->verbose) $this->emit('[BAN] ' . $username . ' - ' . $reason);
+		if ( ($username != $this->nick) && (!in_array($username, $this->channels)) ) {
+			$connection->write("/ban $username $reason");
+			return true;
+		}
+		return false;
+	}
+	
 	/*
 	* Attempt to catch errors with the user-provided $options early
 	*/
@@ -239,7 +249,8 @@ class Twitch
 		}
 	}
 	
-	protected function badwordsCheck($message) {
+	protected function badwordsCheck($message): bool
+	{
 		foreach ($this->badwords as $badword) {
 			if (str_contains($message, $badword)) {
 				if ($this->verbose) $this->emit('[BADWORD] ' . $badword);
@@ -247,11 +258,6 @@ class Twitch
 			}
 		}
 		return false;
-	}
-	
-	public function ban($username, $reason = '') {
-		if ($this->verbose) $this->emit('[BAN] ' . $username . ' - ' . $reason);
-		if ( ($username != $this->nick) && (!in_array($username, $this->channels)) ) $connection->write("/ban $username $reason");
 	}
 	
 	protected function parseMessage(string $data): ?string
